@@ -34,7 +34,7 @@ def load_settings(env_file: Optional[Path] = None) -> Settings:
         gemini_api_key=_require_env("GEMINI_API_KEY"),
         typefully_api_key=_require_env("TYPEFULLY_API_KEY"),
         timezone=_get_env("TIMEZONE", default="Asia/Kolkata"),
-        gemini_model=_get_env("GEMINI_MODEL", default="gemini-pro"),
+        gemini_model=_get_env("GEMINI_MODEL", default="gemini-1.5-pro"),
         max_attempts=_get_int("MAX_RETRIES", default=3),
         dry_run=_get_bool("DRY_RUN", default=False),
         logs_dir=Path(_get_env("LOGS_DIR", default="logs")),
