@@ -54,3 +54,4 @@ jobs:
             git push
           else
             echo "No log changes to commit."
+          fi
