@@ -1,0 +1,56 @@
+name: Post TechCrunch Tweets
+
+on:
+  schedule:
+    - cron: "30 19 * * *"  # 1:00 AM IST daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          source .venv/bin/activate
+          pytest
+
+      - name: Run automation
+        env:
+          TECHCRUNCH_FEED_URL: ${{ secrets.TECHCRUNCH_FEED_URL || 'https://techcrunch.com/feed/' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TYPEFULLY_API_KEY: ${{ secrets.TYPEFULLY_API_KEY }}
+        run: |
+          source .venv/bin/activate
+          python -m src.orchestrator
+
+      - name: Commit logs
+        if: ${{ success() }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ -n "$(git status --porcelain logs)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add logs
+            git commit -m "chore: add daily log for $(date -u +'%Y-%m-%d')"
+            git push
+          else
+            echo "No log changes to commit."
