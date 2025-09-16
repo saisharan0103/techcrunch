@@ -29,7 +29,13 @@ def run(settings: Settings | None = None) -> None:
     target_date = (run_now - timedelta(days=1)).date()
     logger.info("Starting TechCrunch automation for %s", target_date.isoformat())
 
-    items = list(fetch_feed(settings.techcrunch_feed_url, attempts=settings.max_attempts))
+    items = list(
+        fetch_feed(
+            settings.techcrunch_feed_url,
+            attempts=settings.max_attempts,
+            pages=settings.max_feed_pages,
+        )
+    )
     filtered_items = sorted(
         filter_items_for_date(items, target_date=target_date, tz_name=settings.timezone),
         key=lambda item: item.published,
