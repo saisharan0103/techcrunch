@@ -9,13 +9,18 @@ from typing import Optional
 from dotenv import load_dotenv
 
 
+# Configure the default Gemini model here. This value is used directly and
+# does not depend on any environment variable.
+DEFAULT_GEMINI_MODEL = "gemini-pro"
+
+
 @dataclass
 class Settings:
     techcrunch_feed_url: str
     gemini_api_key: str
     typefully_api_key: str
     timezone: str = "Asia/Kolkata"
-    gemini_model: str = "gemini-pro"
+    gemini_model: str = DEFAULT_GEMINI_MODEL
     max_attempts: int = 3
     dry_run: bool = False
     logs_dir: Path = field(default_factory=lambda: Path("logs"))
@@ -34,7 +39,8 @@ def load_settings(env_file: Optional[Path] = None) -> Settings:
         gemini_api_key=_require_env("GEMINI_API_KEY"),
         typefully_api_key=_require_env("TYPEFULLY_API_KEY"),
         timezone=_get_env("TIMEZONE", default="Asia/Kolkata"),
-        gemini_model=_get_env("GEMINI_MODEL", default="gemini-2.5-pro"),
+        # Use the in-code configured model rather than an environment variable.
+        gemini_model=DEFAULT_GEMINI_MODEL,
         max_attempts=_get_int("MAX_RETRIES", default=3),
         dry_run=_get_bool("DRY_RUN", default=False),
         logs_dir=Path(_get_env("LOGS_DIR", default="logs")),
