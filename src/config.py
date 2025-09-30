@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 # Configure the default Gemini model here. This value is used directly and
 # does not depend on any environment variable.
-DEFAULT_GEMINI_MODEL = "gemini-pro"
+DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 
 @dataclass
